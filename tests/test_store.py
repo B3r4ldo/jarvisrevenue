@@ -20,6 +20,9 @@ class StoreTests(unittest.TestCase):
         self.assertIn("mobile-nav", html)
         self.assertNotIn("Catálogo real importado do GitHub", html)
         self.assertNotIn("Seleção Pet | Recomendações", html)
+        self.assertNotIn("amazon.com.br/s?k=", html)
+        self.assertNotIn("const testProducts=", html)
+        self.assertIn("catalog-status", html)
     def test_reject_injection(self):
         sample = dict(id="x",title="<script>alert(1)</script>",category="Brinquedos",description="OK",url="https://link.amazon/abc",status="approved")
         html = build([sample], Path("preview/index.html").read_text(encoding="utf-8"))
