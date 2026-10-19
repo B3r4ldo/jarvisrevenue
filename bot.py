@@ -58,22 +58,60 @@ def product_card(p):
     )
 
 def build(products, template):
-    # Remove the browser-side remote CSV importer, if still present in the preview.
-    template = re.sub(r'<script>\s*/\* Catálogo real importado do GitHub:.*?</script>', '', template, flags=re.S)
-    # Replace initial demonstration product with catalog-generated products.
+    # The interactive 12-item preview is a navigation test, not the live catalog.
+    # Remove its demo-data script so that test search links cannot reach production.
+    template = re.sub(r'<script>\\s*const testProducts=.*?</script>', '', template, flags=re.S)
+    template = re.sub(r'<script>\\s*/\\* Catálogo real importado do GitHub:.*?</script>', '', template, flags=re.S)
     start = template.find('<article class="product"')
     if start < 0:
         raise ValueError("Marcador de produto ausente no template")
     end = template.find("</article>", start)
     if end < 0:
         raise ValueError("Cartão de produto incompleto")
-    template = template[:start] + "".join(product_card(p) for p in products) + template[end+len("</article>"):]
+    template = template[:start] + "".join(product_card(p) for p in products) + template[end + len("</article>"):]
     template = template.replace("BeraldoSales 2.3 — Prévia", "BeraldoSales | Boutique Pet Premium")
-    template = template.replace("Esta página é uma prévia de teste da BeraldoSales 2.3.", "A BeraldoSales é uma curadoria independente.")
-    template = template.replace("Prévia não publicada na loja oficial.", "Consulte informações e condições no parceiro.")
-    # Ensure search handles the generated cards, not only demo HTML.
-    template = template.replace("p.dataset.search.includes(term)", "p.dataset.search.includes(term)")
-    return template
+    template = template.replace("Prévia de testes 2.3", "Curadoria pet")
+    template = template.replace("A versão pública permanece inalterada.", "Confira condições e disponibilidade no parceiro.")
+    # Rewire category tiles and the search form to the approved products only.
+    behavior = """
+<script>
+(() => {
+  const cards = [...document.querySelectorAll('#catalogGrid article.product')];
+  const search = document.getElementById('search');
+  const section = document.getElementById('produtos');
+  const fold = s => (s || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLocaleLowerCase('pt-BR');
+  let category = '';
+  const notice = document.createElement('p');
+  notice.id='catalog-status';
+  notice.setAttribute('role','status');
+  notice.style.cssText='font-size:14px;color:#465f52;margin:12px 0';
+  document.getElementById('catalogGrid').before(notice);
+  function refresh() {
+    let n=0;
+    const term=fold(search.value.trim());
+    cards.forEach(card => {
+      const ok = (!category || fold(card.dataset.category)===fold(category)) && fold(card.dataset.search).includes(term);
+      card.hidden = !ok;
+      if(ok)n++;
+    });
+    notice.textContent = n ? n + ' recomendação' + (n===1?'':'ões') + ' disponível' + (n===1?'':'is') : 'Ainda não temos recomendações aprovadas para esta busca ou categoria.';
+  }
+  const categories=['Cães','Gatos','Brinquedos','Acessórios','Higiene','Ofertas'];
+  document.querySelectorAll('.cat').forEach((item,index) => item.addEventListener('click', e => {
+    e.preventDefault();category=categories[index] || '';search.value='';refresh();section.scrollIntoView({behavior:'smooth'});
+  }));
+  document.querySelectorAll('.desktop-nav a,.mobile-nav a').forEach(item => {
+    if(categories.includes(item.textContent.trim())) item.addEventListener('click', e => {
+      e.preventDefault();category=item.textContent.trim();search.value='';refresh();section.scrollIntoView({behavior:'smooth'});
+    });
+  });
+  search.addEventListener('input',refresh);
+  document.getElementById('searchForm').addEventListener('submit',e=>{e.preventDefault();refresh();section.scrollIntoView({behavior:'smooth'});});
+  refresh();
+})();
+</script>
+"""
+    return template.replace("</body></html>", behavior + "</body></html>")
 
 def main():
     products = load_products()
