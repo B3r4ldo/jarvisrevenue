@@ -1,4 +1,4 @@
-# JARVIS Revenue Bot — MVP 1.0
+# BeraldoSales — plataforma de curadoria pet
 
 Projeto Python sem dependências externas que transforma uma lista de produtos **aprovados manualmente** em um site estático de recomendações. **Nenhuma renda é garantida.**
 
@@ -33,7 +33,7 @@ Os exemplos são **rascunhos** e não aparecem no site. Faça o cadastro de afil
 1. Crie repositório no GitHub, preferencialmente **público** para Pages no plano gratuito; **não armazene credenciais ou dados pessoais no repositório**.
 2. Suba todo o conteúdo do projeto, incluindo `.github/workflows/publish.yml`.
 3. Em Settings > Pages > Build and deployment, selecione Source: **GitHub Actions**.
-4. Em Actions, execute `Build affiliate catalog` por `Run workflow`.
+4. Em Actions, execute `JARVIS Revenue Bot` por `Run workflow`.
 5. O site será publicado no endereço fornecido pelo GitHub Pages após o deploy, se o recurso estiver habilitado no plano/repositório.
 6. O workflow também gera o site ao atualizar o catálogo na branch principal e tenta atualizá-lo diariamente (cron em UTC, sem garantia de horário exato).
 
