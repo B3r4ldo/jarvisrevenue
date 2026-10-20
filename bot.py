@@ -44,18 +44,30 @@ def load_products(source=SOURCE):
             approved.append(p)
     return approved
 
+IMAGES = {
+    "Cães": "https://images.unsplash.com/photo-1552053831-71594a27632d?w=680&q=80",
+    "Gatos": "https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=680&q=80",
+    "Brinquedos": "https://images.unsplash.com/photo-1535294435445-d7249524ef2e?w=680&q=80",
+    "Acessórios": "https://images.unsplash.com/photo-1601758125946-6ec2ef64daf8?w=680&q=80",
+    "Higiene": "https://images.unsplash.com/photo-1517849845537-4d257902454a?w=680&q=80",
+    "Ofertas": "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=680&q=80",
+}
+
 def product_card(p):
     e = lambda s: html.escape(s, quote=True)
-    search = (p["title"]+" "+p["description"]+" "+p["category"]).casefold()
-    # The illustration is decorative; no fake product photo or price is published.
+    photo = IMAGES.get(p["category"], IMAGES["Cães"])
+    search = (p["title"]+" "+p["category"]).casefold()
     return (
         '<article class="product" data-search="'+e(search)+'" data-category="'+e(p["category"])+'">'
-        '<div class="product-visual" aria-label="Ilustração decorativa de produto pet">🧸</div>'
+        '<div class="product-visual"><img src="'+e(photo)+'" alt="Fotografia editorial ilustrativa de '+e(p["category"])+'" loading="lazy" decoding="async">'
+        '<small>Imagem ilustrativa</small></div>'
         '<div class="product-content"><span class="tag">'+e(p["category"])+'</span>'
-        '<h3>'+e(p["title"])+'</h3><p>'+e(p["description"])+'</p>'
-        '<a class="btn" href="'+e(p["url"])+'" rel="sponsored nofollow noopener noreferrer" '
-        'target="_blank">Ver na Amazon →</a></div></article>'
+        '<h4 style="font-size:17px">'+e(p["title"])+'</h4>'
+        '<p style="font-size:13px">Confira variante, preço e estoque na Amazon.</p>'
+        '<a class="btn" href="'+e(p["url"])+'" rel="sponsored nofollow noopener noreferrer" target="_blank">Ver na Amazon →</a>'
+        '</div></article>'
     )
+
 
 def build(products, template):
     """Generate the commercial storefront from the approved product catalog."""
