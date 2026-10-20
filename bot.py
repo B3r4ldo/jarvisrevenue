@@ -79,7 +79,7 @@ def product_card(p):
     image_label = "Imagem do produto" if p.get("image_url") else "Imagem ilustrativa"
     search = (p["title"]+" "+p["description"]+" "+p["category"]).casefold()
     return (
-        '<article class="product" data-search="'+e(search)+'" data-category="'+e(p["category"])+'">'
+        '<article class="product" data-product-id="'+e(p["id"])+'" data-search="'+e(search)+'" data-category="'+e(p["category"])+'">'
         '<div class="product-visual"><img src="'+e(img)+'" alt="'+e(image_alt)+'" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=\''+e(fallback)+'\';this.alt=\'Imagem ilustrativa do tipo de produto\';">'
         '<small>'+e(image_label)+'</small></div>'
         '<div class="product-content"><span class="tag">'+e(p["category"])+'</span>'
