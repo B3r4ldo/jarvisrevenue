@@ -34,7 +34,7 @@ jobs:
 
       - name: Generate website
         env:
-          GA4_MEASUREMENT_ID: ${{ vars.GA4_MEASUREMENT_ID }}
+          GA4_MEASUREMENT_ID: G-856CES1QJK
         run: python bot.py
 
       - name: Configure Pages
