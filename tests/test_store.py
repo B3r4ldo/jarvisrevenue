@@ -1,7 +1,7 @@
 import tempfile
 import unittest
 from pathlib import Path
-from bot import load_products, validate_link, build
+from bot import load_products, validate_link, build, product_card
 
 class StoreTests(unittest.TestCase):
     def test_affiliate_url(self):
@@ -19,7 +19,7 @@ class StoreTests(unittest.TestCase):
         self.assertNotIn("BeraldoSales", html)
         self.assertIn("Ver na Amazon", html)
         self.assertIn("mobile-nav", html)
-        self.assertEqual(html.count("Imagem ilustrativa"), len(load_products()))
+        self.assertEqual(html.count("<small>Imagem ilustrativa</small>"), len(load_products()))
         self.assertIn("training-pad.svg", html)
         self.assertNotIn("images.unsplash.com/photo-1552053831-71594a27632d?w=680", html)
         self.assertNotIn("Catálogo real importado do GitHub", html)
@@ -28,6 +28,21 @@ class StoreTests(unittest.TestCase):
         self.assertNotIn("const testProducts=", html)
         self.assertIn("id=\"catalogGrid\"", html)
         self.assertEqual(html.count('<article class="product"'), len(load_products()))
+    def test_licensed_image_and_fallback(self):
+        p = dict(id="x", title="Brinquedo Macaco", category="Brinquedos",
+                 description="Teste", url="https://link.amazon/test", status="approved",
+                 image_url="https://example.com/authorized-photo.jpg",
+                 image_source="owner-licensed")
+        card = product_card(p)
+        self.assertIn("https://example.com/authorized-photo.jpg", card)
+        self.assertIn("plush-toy.svg", card)
+        self.assertIn("Imagem do produto", card)
+
+    def test_default_image_fallback(self):
+        p = load_products()[0]
+        self.assertIn("Imagem ilustrativa", product_card(p))
+        self.assertIn("preview/assets/", product_card(p))
+
     def test_reject_injection(self):
         sample = dict(id="x",title="<script>alert(1)</script>",category="Brinquedos",description="OK",url="https://link.amazon/abc",status="approved")
         html = build([sample], Path("preview/vitrine.html").read_text(encoding="utf-8"))
