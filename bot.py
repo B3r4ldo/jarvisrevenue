@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""BeraldoSales: validate curated affiliate CSV and render responsive static storefront."""
+"""SeuPetFeliz: validate curated affiliate CSV and render responsive static storefront."""
 import csv
 import html
 import json
@@ -109,7 +109,7 @@ def main():
         "count":len(products),
         "categories":sorted({p["category"] for p in products})
     }, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"BeraldoSales: {len(products)} products generated")
+    print(f"SeuPetFeliz: {len(products)} products generated")
 
 if __name__ == "__main__":
     main()
