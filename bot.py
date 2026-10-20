@@ -100,6 +100,7 @@ def main():
     import shutil
     assets = OUT / "assets"
     assets.mkdir(exist_ok=True)
+    shutil.copy2(ROOT / "preview" / "favicon.svg", OUT / "favicon.svg")
     for source in (ROOT / "preview" / "assets").glob("*.svg"):
         shutil.copy2(source, assets / source.name)
     (OUT/"index.html").write_text(page, encoding="utf-8")
