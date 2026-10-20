@@ -44,26 +44,35 @@ def load_products(source=SOURCE):
             approved.append(p)
     return approved
 
-IMAGES = {
-    "Cães": "https://images.unsplash.com/photo-1552053831-71594a27632d?w=680&q=80",
-    "Gatos": "https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=680&q=80",
-    "Brinquedos": "https://images.unsplash.com/photo-1535294435445-d7249524ef2e?w=680&q=80",
-    "Acessórios": "https://images.unsplash.com/photo-1601758125946-6ec2ef64daf8?w=680&q=80",
-    "Higiene": "https://images.unsplash.com/photo-1517849845537-4d257902454a?w=680&q=80",
-    "Ofertas": "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=680&q=80",
-}
+def image_for(title, category):
+    t = title.casefold()
+    if any(x in t for x in ("tapete", "pad", "seco", "secão")):
+        return "training-pad"
+    if any(x in t for x in ("areia", "granulado", "pipicat", "viva verde", "mitzi", "great pets")):
+        return "cat-litter"
+    if any(x in t for x in ("bifinho", "biscrok", "dreamies", "temptations", "petisco")):
+        return "treats"
+    if any(x in t for x in ("sachê", "sache")):
+        return "wet-food"
+    if any(x in t for x in ("ração", "racao", "whiskas adultos")):
+        return "dry-food"
+    if any(x in t for x in ("macaco", "pelúcia", "pelucia", "brinquedo")):
+        return "plush-toy"
+    if any(x in t for x in ("saquinho", "cata-caca")):
+        return "poop-bags"
+    return "treats" if category == "Cães" else "training-pad"
 
 def product_card(p):
-    e = lambda s: html.escape(s, quote=True)
-    photo = IMAGES.get(p["category"], IMAGES["Cães"])
-    search = (p["title"]+" "+p["category"]).casefold()
+    e = lambda value: html.escape(value, quote=True)
+    img = "../preview/assets/" + image_for(p["title"], p["category"]) + ".svg"
+    search = (p["title"]+" "+p["description"]+" "+p["category"]).casefold()
     return (
         '<article class="product" data-search="'+e(search)+'" data-category="'+e(p["category"])+'">'
-        '<div class="product-visual"><img src="'+e(photo)+'" alt="Fotografia editorial ilustrativa de '+e(p["category"])+'" loading="lazy" decoding="async">'
+        '<div class="product-visual"><img src="'+e(img)+'" alt="Ilustração representativa do tipo de produto" loading="lazy">'
         '<small>Imagem ilustrativa</small></div>'
         '<div class="product-content"><span class="tag">'+e(p["category"])+'</span>'
-        '<h4 style="font-size:17px">'+e(p["title"])+'</h4>'
-        '<p style="font-size:13px">Confira variante, preço e estoque na Amazon.</p>'
+        '<h4>'+e(p["title"])+'</h4>'
+        '<p>Confira a embalagem, variante e disponibilidade diretamente na Amazon.</p>'
         '<a class="btn" href="'+e(p["url"])+'" rel="sponsored nofollow noopener noreferrer" target="_blank">Ver na Amazon →</a>'
         '</div></article>'
     )
@@ -86,7 +95,13 @@ def main():
     products = load_products()
     template = PREVIEW.read_text(encoding="utf-8")
     page = build(products, template)
+    page = page.replace("../preview/assets/", "assets/")
     OUT.mkdir(parents=True, exist_ok=True)
+    import shutil
+    assets = OUT / "assets"
+    assets.mkdir(exist_ok=True)
+    for source in (ROOT / "preview" / "assets").glob("*.svg"):
+        shutil.copy2(source, assets / source.name)
     (OUT/"index.html").write_text(page, encoding="utf-8")
     (OUT/"robots.txt").write_text("User-agent: *\nAllow: /\n", encoding="utf-8")
     (OUT/"catalog.json").write_text(json.dumps({
