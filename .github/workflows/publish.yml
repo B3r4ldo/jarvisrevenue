@@ -33,6 +33,8 @@ jobs:
           python-version: "3.12"
 
       - name: Generate website
+        env:
+          GA4_MEASUREMENT_ID: G-856CES1QJK
         run: python bot.py
 
       - name: Configure Pages
