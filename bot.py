@@ -80,15 +80,15 @@ def product_card(p):
 
 def build(products, template):
     """Generate the commercial storefront from the approved product catalog."""
-    first = template.find('<article class="product"')
+    start_marker = '<div class="products" id="catalogGrid">'
+    end_marker = '</div></section><section class="features">'
+    first = template.find(start_marker)
     if first < 0:
         raise ValueError("Product grid marker missing from storefront template")
-    end_marker = '</div></section></main>'
     after_grid = template.find(end_marker, first)
     if after_grid < 0:
         raise ValueError("Grid closing marker missing")
-    # Keep styling, filtering, links, and surrounding layout; replace the demo cards.
-    return template[:first] + ''.join(product_card(p) for p in products) + template[after_grid:]
+    return template[:first + len(start_marker)] + ''.join(product_card(p) for p in products) + template[after_grid:]
 
 
 def main():
