@@ -13,7 +13,7 @@ class StoreTests(unittest.TestCase):
         self.assertGreaterEqual(len(data), 1)
         self.assertTrue(all(p["status"] == "approved" for p in data))
     def test_generated_design(self):
-        template = Path("preview/index.html").read_text(encoding="utf-8")
+        template = Path("preview/vitrine.html").read_text(encoding="utf-8")
         html = build(load_products(), template)
         self.assertIn("BeraldoSales", html)
         self.assertIn("Ver na Amazon", html)
@@ -22,10 +22,11 @@ class StoreTests(unittest.TestCase):
         self.assertNotIn("Seleção Pet | Recomendações", html)
         self.assertNotIn("amazon.com.br/s?k=", html)
         self.assertNotIn("const testProducts=", html)
-        self.assertIn("catalog-status", html)
+        self.assertIn("id=\"catalogGrid\"", html)
+        self.assertEqual(html.count('<article class="product"'), len(load_products()))
     def test_reject_injection(self):
         sample = dict(id="x",title="<script>alert(1)</script>",category="Brinquedos",description="OK",url="https://link.amazon/abc",status="approved")
-        html = build([sample], Path("preview/index.html").read_text(encoding="utf-8"))
+        html = build([sample], Path("preview/vitrine.html").read_text(encoding="utf-8"))
         self.assertNotIn("<script>alert(1)</script>", html)
         self.assertIn("&lt;script&gt;", html)
 
