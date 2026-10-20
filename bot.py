@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """SeuPetFeliz: validate curated affiliate CSV and render responsive static storefront."""
 import csv
+import os
 import html
 import json
 import pathlib
@@ -14,6 +15,7 @@ PREVIEW = ROOT / "preview" / "vitrine.html"
 OUT = ROOT / "site"
 REQUIRED = {"id", "title", "category", "description", "url", "status"}
 ALLOWED_HOSTS = {"link.amazon", "amazon.com.br", "www.amazon.com.br", "amzn.to"}
+IMAGE_SOURCES = {"amazon-creators-api", "brand-authorized", "owner-licensed"}
 
 def validate_link(url):
     try:
@@ -40,6 +42,14 @@ def load_products(source=SOURCE):
                 raise ValueError(f"Linha {line}: id duplicado")
             if not validate_link(p["url"]):
                 raise ValueError(f"Linha {line}: use link HTTPS autorizado da Amazon")
+            p["image_url"] = (row.get("image_url") or "").strip()
+            p["image_source"] = (row.get("image_source") or "").strip()
+            if p["image_url"] or p["image_source"]:
+                image = urlparse(p["image_url"])
+                if image.scheme != "https" or not image.hostname or image.username or image.password:
+                    raise ValueError(f"Linha {line}: imagem deve usar URL HTTPS válida")
+                if p["image_source"] not in IMAGE_SOURCES:
+                    raise ValueError(f"Linha {line}: informe fonte de imagem autorizada")
             seen.add(p["id"])
             approved.append(p)
     return approved
@@ -64,12 +74,15 @@ def image_for(title, category):
 
 def product_card(p):
     e = lambda value: html.escape(value, quote=True)
-    img = "../preview/assets/" + image_for(p["title"], p["category"]) + ".svg"
+    fallback = "../preview/assets/" + image_for(p["title"], p["category"]) + ".svg"
+    img = p.get("image_url") or fallback
+    image_alt = "Imagem do produto " + p["title"] if p.get("image_url") else "Ilustração representativa do tipo de produto"
+    image_label = "Imagem do produto" if p.get("image_url") else "Imagem ilustrativa"
     search = (p["title"]+" "+p["description"]+" "+p["category"]).casefold()
     return (
-        '<article class="product" data-search="'+e(search)+'" data-category="'+e(p["category"])+'">'
-        '<div class="product-visual"><img src="'+e(img)+'" alt="Ilustração representativa do tipo de produto" loading="lazy">'
-        '<small>Imagem ilustrativa</small></div>'
+        '<article class="product" data-product-id="'+e(p["id"])+'" data-search="'+e(search)+'" data-category="'+e(p["category"])+'">'
+        '<div class="product-visual"><img src="'+e(img)+'" alt="'+e(image_alt)+'" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=\''+e(fallback)+'\';this.alt=\'Imagem ilustrativa do tipo de produto\';">'
+        '<small>'+e(image_label)+'</small></div>'
         '<div class="product-content"><span class="tag">'+e(p["category"])+'</span>'
         '<h4>'+e(p["title"])+'</h4>'
         '<p>Confira a embalagem, variante e disponibilidade diretamente na Amazon.</p>'
@@ -96,11 +109,17 @@ def main():
     template = PREVIEW.read_text(encoding="utf-8")
     page = build(products, template)
     page = page.replace("../preview/assets/", "assets/")
+    measurement_id = os.environ.get("GA4_MEASUREMENT_ID", "").strip()
+    if measurement_id:
+        if not re.fullmatch(r"G-[A-Z0-9]{6,20}", measurement_id):
+            raise ValueError("GA4_MEASUREMENT_ID deve ter formato G-XXXXXXXX")
+        ga = '<script>window.GA4_MEASUREMENT_ID=' + json.dumps(measurement_id) + ';</script>'
+        page = page.replace("</head>", ga + "</head>", 1)
     OUT.mkdir(parents=True, exist_ok=True)
     import shutil
+    shutil.copy2(ROOT / "preview" / "favicon.svg", OUT / "favicon.svg")
     assets = OUT / "assets"
     assets.mkdir(exist_ok=True)
-    shutil.copy2(ROOT / "preview" / "favicon.svg", OUT / "favicon.svg")
     for source in (ROOT / "preview" / "assets").glob("*.svg"):
         shutil.copy2(source, assets / source.name)
     (OUT/"index.html").write_text(page, encoding="utf-8")
