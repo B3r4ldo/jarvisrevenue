@@ -22,7 +22,9 @@ jobs:
         run: |
           test -s site/index.html
           test -s site/catalog.json
-          grep -q 'BeraldoSales' site/index.html
+          grep -q 'SeuPetFeliz' site/index.html
+          test -s site/assets/training-pad.svg
+          test "$(grep -o 'class=\"product\"' site/index.html | wc -l)" -eq 35
           grep -q 'Ver na Amazon' site/index.html
       - uses: actions/upload-artifact@v4
         with:
