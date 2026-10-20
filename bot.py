@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """SeuPetFeliz: validate curated affiliate CSV and render responsive static storefront."""
 import csv
+import os
 import html
 import json
 import pathlib
@@ -108,6 +109,12 @@ def main():
     template = PREVIEW.read_text(encoding="utf-8")
     page = build(products, template)
     page = page.replace("../preview/assets/", "assets/")
+    measurement_id = os.environ.get("GA4_MEASUREMENT_ID", "").strip()
+    if measurement_id:
+        if not re.fullmatch(r"G-[A-Z0-9]{6,20}", measurement_id):
+            raise ValueError("GA4_MEASUREMENT_ID deve ter formato G-XXXXXXXX")
+        ga = '<script>window.GA4_MEASUREMENT_ID=' + json.dumps(measurement_id) + ';</script>'
+        page = page.replace("</head>", ga + "</head>", 1)
     OUT.mkdir(parents=True, exist_ok=True)
     import shutil
     assets = OUT / "assets"
