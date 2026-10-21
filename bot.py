@@ -75,9 +75,11 @@ def image_for(title, category):
 def product_card(p):
     e = lambda value: html.escape(value, quote=True)
     fallback = "../preview/assets/" + image_for(p["title"], p["category"]) + ".svg"
-    img = p.get("image_url") or fallback
-    image_alt = "Imagem do produto " + p["title"] if p.get("image_url") else "Ilustração representativa do tipo de produto"
-    image_label = "Imagem do produto" if p.get("image_url") else "Imagem ilustrativa"
+    generated_path = ROOT / "preview" / "assets" / "generated" / (p["id"] + ".webp")
+    generated = generated_path.exists()
+    img = p.get("image_url") or ("../preview/assets/generated/" + p["id"] + ".webp" if generated else fallback)
+    image_alt = "Imagem do produto " + p["title"] if p.get("image_url") else "Imagem ilustrativa de produto, gerada por IA" if generated else "Ilustração representativa do tipo de produto"
+    image_label = "Imagem do produto" if p.get("image_url") else "Imagem ilustrativa · IA" if generated else "Imagem ilustrativa"
     search = (p["title"]+" "+p["description"]+" "+p["category"]).casefold()
     return (
         '<article class="product" data-product-id="'+e(p["id"])+'" data-search="'+e(search)+'" data-category="'+e(p["category"])+'">'
@@ -120,6 +122,12 @@ def main():
     shutil.copy2(ROOT / "preview" / "favicon.svg", OUT / "favicon.svg")
     assets = OUT / "assets"
     assets.mkdir(exist_ok=True)
+    generated_assets = ROOT / "preview" / "assets" / "generated"
+    if generated_assets.exists():
+        image_dest = assets / "generated"
+        image_dest.mkdir(exist_ok=True)
+        for source in generated_assets.glob("*.webp"):
+            shutil.copy2(source, image_dest / source.name)
     for source in (ROOT / "preview" / "assets").glob("*.svg"):
         shutil.copy2(source, assets / source.name)
     (OUT/"index.html").write_text(page, encoding="utf-8")
