@@ -137,7 +137,10 @@ def main():
         "count":len(products),
         "categories":sorted({p["category"] for p in products})
     }, ensure_ascii=False, indent=2), encoding="utf-8")
+    from campaigns import generate
+    generate(products, page, OUT)
     print(f"SeuPetFeliz: {len(products)} products generated")
 
 if __name__ == "__main__":
     main()
+

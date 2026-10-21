@@ -1,0 +1,11 @@
+{
+  "status": "draft_not_scheduled",
+  "currency": "BRL",
+  "proposed_total_cap": 300,
+  "initial_tranche": 100,
+  "requires_campaign_review_before_spend": true,
+  "campaigns": [
+    {"name":"Rotina pet - tapetes", "initial_cap":50,"headline":"Compare tapetes antes de repor", "text":"Tamanho, quantidade e custo por unidade: veja o que conferir na próxima compra. Conheça a seleção da SeuPetFeliz. Publicidade: podemos receber comissão por compras qualificadas.","destination":"https://b3r4ldo.github.io/jarvisrevenue/guias/tapetes-higienicos.html?utm_source=instagram&utm_medium=paid_social&utm_campaign=piloto_rotina_pet&utm_content=tapetes_a"},
+    {"name":"Rotina pet - areia", "initial_cap":50,"headline":"Escolha a areia com mais informação", "text":"Compare material, peso e orientações de uso antes de escolher. Confira opções na SeuPetFeliz. Publicidade: podemos receber comissão por compras qualificadas.","destination":"https://b3r4ldo.github.io/jarvisrevenue/guias/areia-para-gatos.html?utm_source=instagram&utm_medium=paid_social&utm_campaign=piloto_rotina_pet&utm_content=areia_a"}
+  ]
+}
