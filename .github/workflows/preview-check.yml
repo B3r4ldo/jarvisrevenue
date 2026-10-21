@@ -4,6 +4,7 @@ on:
     branches:
       - preview/beraldosales-2.2
       - feature/seupetfeliz-imagens-geradas
+      - feature/seupetfeliz-piloto-comercial
   workflow_dispatch:
 permissions:
   contents: read
@@ -31,3 +32,4 @@ jobs:
         with:
           name: beraldosales-preview-site
           path: site/
+

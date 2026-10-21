@@ -1,0 +1,42 @@
+{
+  "researched_on": "2026-10-21",
+  "method": "Seleção por sinais públicos indexados, aderência ao catálogo e hipótese de recompra. Não constitui ranking atual auditado nem vendas próprias. Confirmar variante e atribuição dos links no painel antes de tráfego pago.",
+  "products": [
+    {
+      "id": "bs-001",
+      "title": "Petlike Ultrapads Lavanda 80x60 30un",
+      "source": "https://www.amazon.com.br/Pet-Shop-PetLike/s?rh=n%3A18991136011%2Cp_4%3APetLike",
+      "evidence": "Mais de 6 mil compras no mês passado no resultado indexado; outros resultados indicam 9 mil. Não é volume auditado."
+    },
+    {
+      "id": "bs-002",
+      "title": "Blue Premium Tapete 30un",
+      "source": "https://www.amazon.com.br/Pet-Shop-Blue-Premium/s?rh=n%3A18991136011%2Cp_4%3ABlue%2BPremium",
+      "evidence": "Mais de 6 mil compras no mês passado no resultado indexado; varia entre resultados."
+    },
+    {
+      "id": "bs-003",
+      "title": "Good Pad 60x60 50un",
+      "source": "https://www.amazon.com.br/Tapetes-Higi%C3%AAnicos-Treinamento-C%C3%A3es-Descart%C3%A1veis/s?rh=n%3A23575160011%2Cp_n_g-101013998493111%3A107230081011",
+      "evidence": "Mais de 3 mil compras no mês passado no resultado indexado para variante 50un."
+    },
+    {
+      "id": "bs-007",
+      "title": "Pipicat Classic 4kg",
+      "source": "https://www.amazon.com.br/Pet-Shop-Pipicat/s?rh=n%3A18991136011%2Cp_89%3APipicat",
+      "evidence": "Mais de 6 mil compras no mês passado no resultado indexado."
+    },
+    {
+      "id": "bs-008",
+      "title": "Viva Verde Grãos Finos 4kg",
+      "source": "https://www.amazon.com.br/areia-viva-verde-fino/s?k=areia+viva+verde+fino",
+      "evidence": "Resultado de busca mostra produto e indicadores de compras, mas associação do número à variante é ambígua. Evidência secundária: presença em lista de mais vendidos indexada antiga."
+    },
+    {
+      "id": "bs-009",
+      "title": "Dreamies Carne Tentadora 150g",
+      "source": "https://www.amazon.com.br/Petisco-Dreamies-Carne-Tentadora-Adultos/dp/B0BWQ5VHJQ",
+      "evidence": "Mais de 4 mil compras no mês passado no índice; resumo também mostra mais de 600 na semana. Janelas distintas, não somar."
+    }
+  ]
+}
