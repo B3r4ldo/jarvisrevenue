@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - preview/beraldosales-2.2
+      - feature/seupetfeliz-imagens-geradas
   workflow_dispatch:
 permissions:
   contents: read
