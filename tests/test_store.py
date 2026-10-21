@@ -19,7 +19,8 @@ class StoreTests(unittest.TestCase):
         self.assertNotIn("BeraldoSales", html)
         self.assertIn("Ver na Amazon", html)
         self.assertIn("mobile-nav", html)
-        self.assertEqual(html.count("<small>Imagem ilustrativa</small>"), len(load_products()))
+        self.assertEqual(html.count("<small>Imagem ilustrativa · IA</small>"), 34)
+        self.assertEqual(html.count("<small>Imagem ilustrativa</small>"), 1)
         self.assertIn("training-pad.svg", html)
         self.assertNotIn("images.unsplash.com/photo-1552053831-71594a27632d?w=680", html)
         self.assertNotIn("Catálogo real importado do GitHub", html)
@@ -51,3 +52,4 @@ class StoreTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
